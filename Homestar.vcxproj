@@ -42,14 +42,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -101,10 +101,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)boost;$(ProjectDir)zlib;$(ProjectDir)rapidxml-1.13;$(ProjectDir)format;$(ProjectDir)glew-2.0.0\include;$(ProjectDir)glm;$(ProjectDir)Box2D;$(ProjectDir)windows;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)glew-2.0.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,15 +136,176 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)boost;$(ProjectDir)zlib;$(ProjectDir)rapidxml-1.13;$(ProjectDir)format;$(ProjectDir)glew-2.0.0\include;$(ProjectDir)glm;$(ProjectDir)Box2D;$(ProjectDir)windows;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)glew-2.0.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Box2D\Collision\b2BroadPhase.cpp" />
+    <ClCompile Include="Box2D\Collision\b2CollideCircle.cpp" />
+    <ClCompile Include="Box2D\Collision\b2CollideEdge.cpp" />
+    <ClCompile Include="Box2D\Collision\b2CollidePolygon.cpp" />
+    <ClCompile Include="Box2D\Collision\b2Collision.cpp" />
+    <ClCompile Include="Box2D\Collision\b2Distance.cpp" />
+    <ClCompile Include="Box2D\Collision\b2DynamicTree.cpp" />
+    <ClCompile Include="Box2D\Collision\b2TimeOfImpact.cpp" />
+    <ClCompile Include="Box2D\Collision\Shapes\b2ChainShape.cpp" />
+    <ClCompile Include="Box2D\Collision\Shapes\b2CircleShape.cpp" />
+    <ClCompile Include="Box2D\Collision\Shapes\b2EdgeShape.cpp" />
+    <ClCompile Include="Box2D\Collision\Shapes\b2PolygonShape.cpp" />
+    <ClCompile Include="Box2D\Common\b2BlockAllocator.cpp" />
+    <ClCompile Include="Box2D\Common\b2Draw.cpp" />
+    <ClCompile Include="Box2D\Common\b2Math.cpp" />
+    <ClCompile Include="Box2D\Common\b2Settings.cpp" />
+    <ClCompile Include="Box2D\Common\b2StackAllocator.cpp" />
+    <ClCompile Include="Box2D\Common\b2Timer.cpp" />
+    <ClCompile Include="Box2D\Dynamics\b2Body.cpp" />
+    <ClCompile Include="Box2D\Dynamics\b2ContactManager.cpp" />
+    <ClCompile Include="Box2D\Dynamics\b2Fixture.cpp" />
+    <ClCompile Include="Box2D\Dynamics\b2Island.cpp" />
+    <ClCompile Include="Box2D\Dynamics\b2World.cpp" />
+    <ClCompile Include="Box2D\Dynamics\b2WorldCallbacks.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2ChainAndCircleContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2ChainAndPolygonContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2CircleContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2Contact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2ContactSolver.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2EdgeAndCircleContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2EdgeAndPolygonContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2PolygonAndCircleContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Contacts\b2PolygonContact.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2DistanceJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2FrictionJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2GearJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2Joint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2MotorJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2MouseJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2PrismaticJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2PulleyJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2RevoluteJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2RopeJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2WeldJoint.cpp" />
+    <ClCompile Include="Box2D\Dynamics\Joints\b2WheelJoint.cpp" />
+    <ClCompile Include="Box2D\Rope\b2Rope.cpp" />
+    <ClCompile Include="format\format.cc" />
+    <ClCompile Include="game\Clock.cpp" />
+    <ClCompile Include="game\DynamicObject.cpp" />
+    <ClCompile Include="game\Engine.cpp" />
+    <ClCompile Include="game\EventUIEffect.cpp" />
+    <ClCompile Include="game\Font.cpp" />
+    <ClCompile Include="game\Game.cpp" />
+    <ClCompile Include="game\GameMenu.cpp" />
+    <ClCompile Include="game\GameUI.cpp" />
+    <ClCompile Include="game\GenShadow.cpp" />
+    <ClCompile Include="game\Loader.cpp" />
+    <ClCompile Include="game\ParticleSys2.cpp" />
+    <ClCompile Include="game\Player.cpp" />
+    <ClCompile Include="game\PlayerObjects.cpp" />
+    <ClCompile Include="game\PolyAnim.cpp" />
+    <ClCompile Include="game\PolySprite.cpp" />
+    <ClCompile Include="game\QuadMesh2.cpp" />
+    <ClCompile Include="game\Screen.cpp" />
+    <ClCompile Include="game\Shaders.cpp" />
+    <ClCompile Include="game\StaticGeometry.cpp" />
+    <ClCompile Include="game\Text.cpp" />
+    <ClCompile Include="game\Texture2.cpp" />
+    <ClCompile Include="game\Timer.cpp" />
+    <ClCompile Include="game\UIBaseButton.cpp" />
+    <ClCompile Include="game\UIBox.cpp" />
+    <ClCompile Include="game\UIButton.cpp" />
+    <ClCompile Include="game\UIDrawable.cpp" />
+    <ClCompile Include="game\UIItem.cpp" />
+    <ClCompile Include="game\UILayer.cpp" />
+    <ClCompile Include="game\UIMenu.cpp" />
+    <ClCompile Include="game\UIMessageBox.cpp" />
+    <ClCompile Include="game\UISlider.cpp" />
+    <ClCompile Include="game\UIStatic.cpp" />
+    <ClCompile Include="game\UIText.cpp" />
+    <ClCompile Include="game\UITextButton.cpp" />
+    <ClCompile Include="game\UITransition.cpp" />
+    <ClCompile Include="libpng\png.c" />
+    <ClCompile Include="libpng\pngerror.c" />
+    <ClCompile Include="libpng\pngget.c" />
+    <ClCompile Include="libpng\pngmem.c" />
+    <ClCompile Include="libpng\pngpread.c" />
+    <ClCompile Include="libpng\pngread.c" />
+    <ClCompile Include="libpng\pngrio.c" />
+    <ClCompile Include="libpng\pngrtran.c" />
+    <ClCompile Include="libpng\pngrutil.c" />
+    <ClCompile Include="libpng\pngset.c" />
+    <ClCompile Include="libpng\pngtest.c" />
+    <ClCompile Include="libpng\pngtrans.c" />
+    <ClCompile Include="libpng\pngwio.c" />
+    <ClCompile Include="libpng\pngwrite.c" />
+    <ClCompile Include="libpng\pngwtran.c" />
+    <ClCompile Include="libpng\pngwutil.c" />
+    <ClCompile Include="windows\BinaryFile.cpp" />
+    <ClCompile Include="windows\Debug.cpp" />
+    <ClCompile Include="windows\main.cpp" />
+    <ClCompile Include="zlib\adler32.c" />
+    <ClCompile Include="zlib\compress.c" />
+    <ClCompile Include="zlib\crc32.c" />
+    <ClCompile Include="zlib\deflate.c" />
+    <ClCompile Include="zlib\gzclose.c" />
+    <ClCompile Include="zlib\gzlib.c" />
+    <ClCompile Include="zlib\gzread.c" />
+    <ClCompile Include="zlib\gzwrite.c" />
+    <ClCompile Include="zlib\infback.c" />
+    <ClCompile Include="zlib\inffast.c" />
+    <ClCompile Include="zlib\inflate.c" />
+    <ClCompile Include="zlib\inftrees.c" />
+    <ClCompile Include="zlib\trees.c" />
+    <ClCompile Include="zlib\uncompr.c" />
+    <ClCompile Include="zlib\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game\Clock.h" />
+    <ClInclude Include="game\DynamicObject.h" />
+    <ClInclude Include="game\Engine.h" />
+    <ClInclude Include="game\EventUIEffect.h" />
+    <ClInclude Include="game\Font.h" />
+    <ClInclude Include="game\Game.h" />
+    <ClInclude Include="game\GameMenu.h" />
+    <ClInclude Include="game\GameParams.h" />
+    <ClInclude Include="game\GameUI.h" />
+    <ClInclude Include="game\GenShadow.h" />
+    <ClInclude Include="game\Loader.h" />
+    <ClInclude Include="game\ParticleSys2.h" />
+    <ClInclude Include="game\Player.h" />
+    <ClInclude Include="game\PlayerObjects.h" />
+    <ClInclude Include="game\PolyAnim.h" />
+    <ClInclude Include="game\PolySprite.h" />
+    <ClInclude Include="game\QuadMesh2.h" />
+    <ClInclude Include="game\Screen.h" />
+    <ClInclude Include="game\Shaders.h" />
+    <ClInclude Include="game\StaticGeometry.h" />
+    <ClInclude Include="game\Text.h" />
+    <ClInclude Include="game\Texture2.h" />
+    <ClInclude Include="game\Timer.h" />
+    <ClInclude Include="game\UI.h" />
+    <ClInclude Include="game\UIBaseButton.h" />
+    <ClInclude Include="game\UIBox.h" />
+    <ClInclude Include="game\UIButton.h" />
+    <ClInclude Include="game\UIDrawable.h" />
+    <ClInclude Include="game\UIItem.h" />
+    <ClInclude Include="game\UILayer.h" />
+    <ClInclude Include="game\UIMenu.h" />
+    <ClInclude Include="game\UIMessageBox.h" />
+    <ClInclude Include="game\UISlider.h" />
+    <ClInclude Include="game\UIStatic.h" />
+    <ClInclude Include="game\UIText.h" />
+    <ClInclude Include="game\UITextButton.h" />
+    <ClInclude Include="game\UITransition.h" />
+    <ClInclude Include="windows\BinaryFile.h" />
+    <ClInclude Include="windows\Debug.h" />
+    <ClInclude Include="windows\Platform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
