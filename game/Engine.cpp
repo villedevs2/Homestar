@@ -1036,6 +1036,8 @@ bool Engine::loadLevel(std::string filename)
 	{
 		Debug::log(failure.what());
 
+		const char* error = failure.what();
+
 		input.close();
 		return false;
 	}

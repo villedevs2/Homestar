@@ -130,10 +130,10 @@ bool Atlas::loadPNG(std::string filename, Image* image)
 		
 		input.close();
 
-		if (row_pointers != NULL)
+		if (row_pointers != nullptr)
 		{
 			delete [] row_pointers;
-			row_pointers = NULL;
+			row_pointers = nullptr;
 		}
 	}
 	catch (ios_base::failure failure)
@@ -142,15 +142,15 @@ bool Atlas::loadPNG(std::string filename, Image* image)
 
 		input.close();
 
-		if (row_pointers != NULL)
+		if (row_pointers != nullptr)
 		{
 			delete [] row_pointers;
-			row_pointers = NULL;
+			row_pointers = nullptr;
 		}
-		if (pixels != NULL)
+		if (pixels != nullptr)
 		{
 			delete [] pixels;
-			pixels = NULL;
+			pixels = nullptr;
 		}
 		return false;
 	}
@@ -182,7 +182,7 @@ Atlas* Atlas::loadAtlas(std::string filename)
 	}
 
 	delete atlas;	
-	return NULL;
+	return nullptr;
 }
 
 // static Atlas finder
@@ -197,7 +197,7 @@ Atlas* Atlas::findAtlas(std::string name)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int Atlas::getWidth()
@@ -306,7 +306,7 @@ bool Atlas::load(std::string filename)
 
 Texture::Texture()
 {
-	m_atlas = NULL;
+	m_atlas = nullptr;
 	m_name = "";
 }
 
@@ -351,18 +351,18 @@ void Texture::apply(int unit)
 
 bool Texture::load(std::string filename, float x, float y, float width, float height)
 {
-	Atlas* atlas = NULL;
+	Atlas* atlas = nullptr;
 
 	// find atlas
 	atlas = Atlas::findAtlas(filename);
 
-	if (atlas == NULL)
+	if (atlas == nullptr)
 	{
 		Debug::log("Texture::load(): Atlas " + filename + " not loaded yet, loading");
 		atlas = Atlas::loadAtlas(filename);
 	}
 
-	if (atlas == NULL)
+	if (atlas == nullptr)
 	{
 		Debug::error("Texture::load(): atlas null " + filename);
 		return false;
@@ -388,19 +388,19 @@ bool Texture::load(std::string filename, float x, float y, float width, float he
 
 bool Texture::load(std::string filename)
 {
-	Atlas* atlas = NULL;
+	Atlas* atlas = nullptr;
 
 	Debug::log("Texture::load(): " + filename);
 
 	// find atlas
 	atlas = Atlas::findAtlas(filename);
 
-	if (atlas == NULL)
+	if (atlas == nullptr)
 	{
 		atlas = Atlas::loadAtlas(filename);
 	}
 
-	if (atlas == NULL)
+	if (atlas == nullptr)
 	{
 		return false;
 	}
@@ -427,6 +427,7 @@ bool Texture::load(std::string filename)
 
 TextureSet::TextureSet()
 {
+	m_atlas = nullptr;
 }
 
 TextureSet::~TextureSet()
@@ -437,7 +438,7 @@ TextureSet::~TextureSet()
 		delete m_textures[i];
 	}
 
-	if (m_atlas != NULL)
+	if (m_atlas != nullptr)
 		m_atlas->deleteReference(this);
 }
 
@@ -462,7 +463,7 @@ Texture* TextureSet::findTexture(std::string name)
 			return m_textures[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Texture* TextureSet::getTexture(int index)
@@ -480,7 +481,7 @@ int TextureSet::getNumTextures()
 bool TextureSet::load(std::string filename)
 {
 	BinaryFile input;
-	char* text = NULL;
+	char* text = nullptr;
 
 	std::string atlas_name = "";
 	std::list<TextureEntry> texture;
@@ -506,10 +507,10 @@ bool TextureSet::load(std::string filename)
 	{
 		input.close();
 
-		if (text != NULL)
+		if (text != nullptr)
 			delete [] text;
 
-		return NULL;
+		return nullptr;
 	}
 
 	// parse it
@@ -522,10 +523,10 @@ bool TextureSet::load(std::string filename)
 		const char* error_what = failure.what();
 		char* error_where = failure.where<char>();
 
-		if (text != NULL)
+		if (text != nullptr)
 			delete [] text;
 
-		return NULL;
+		return nullptr;
 	}
 
 	xml_node<>* root = doc.first_node("atlas");
@@ -596,7 +597,7 @@ bool TextureSet::load(std::string filename)
 		node = node->next_sibling();
 	}
 
-	if (text != NULL)
+	if (text != nullptr)
 		delete [] text;
 
 	// load atlas if we have filename
@@ -605,11 +606,11 @@ bool TextureSet::load(std::string filename)
 		m_textures.clear();
 
 		m_atlas = Atlas::findAtlas(atlas_name);		
-		if (m_atlas == NULL)
+		if (m_atlas == nullptr)
 		{
 			m_atlas = Atlas::loadAtlas(atlas_name);
 		}
-		if (m_atlas == NULL)
+		if (m_atlas == nullptr)
 			return false;
 
 		float atlas_width = m_atlas->getWidth();

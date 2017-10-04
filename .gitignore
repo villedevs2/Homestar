@@ -33,3 +33,4 @@
 *.tlog
 x64/
 Debug/
+log.txt
