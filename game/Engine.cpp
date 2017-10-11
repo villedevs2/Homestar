@@ -806,22 +806,19 @@ bool Engine::loadLevel(std::string filename)
 
 		input.open(filename);
 
-		// BLBX ID
+		// HSLX ID
 		id = input.read_dword();
-		if (id != BLBX_ID)
+		if (id != HSLX_ID)
 		{
-			throw ios_base::failure("Engine::loadLevel(): BLBX ID not found.");
+			throw ios_base::failure("Engine::loadLevel(): HSLX ID not found.");
 		}
 
-		// BLBX version
-		int blbx_version = input.read_dword();
-		if (blbx_version != BLBX_VERSION)
+		// HSLX version
+		int hslx_version = input.read_dword();
+		if (hslx_version != HSLX_VERSION)
 		{
-			throw ios_base::failure("Engine::loadLevel(): unsupported BLBX version.");
+			throw ios_base::failure("Engine::loadLevel(): unsupported HSLX version.");
 		}
-
-		// num of objects
-		int num_objects = input.read_dword();
 
 		// texture name
 		char texname_array[256];
@@ -839,6 +836,8 @@ bool Engine::loadLevel(std::string filename)
 		m_level_texture->load(texname);
 
 
+
+		/*
 		// load level bounds
 		m_level_min_x = input.read_float();
 		m_level_max_x = input.read_float();
@@ -872,33 +871,20 @@ bool Engine::loadLevel(std::string filename)
 
 		m_level_container_body = m_world->CreateBody(&body_def);
 		m_level_container_body->CreateFixture(&shape, 0.0f);
+		*/
 
-
-		// load affixes
-		id = input.read_dword();
-		if (id != LAFX_ID)
-		{
-			throw ios_base::failure("Engine::loadLevel(): LAFX ID not found.");
-		}
-
-		m_affixes.affixes = input.read_dword();
-		m_affixes.time_limit = (timeunit)input.read_dword();
-
+		// num of objects
+		int num_objects = input.read_dword();
 
 		// load objects
 		for (int i=0; i < num_objects; i++)
 		{
 			int object_type;
 
-			id = input.read_dword();
-			if (id != BLOX_ID)
-			{
-				throw ios_base::failure("Engine::loadLevel(): BLOX ID not found.");
-			}
-
 			object_type = input.read_dword();
 			int num_points = input.read_dword();
 			int object_z = input.read_dword();
+			unsigned int color = input.read_dword();
 
 			// load points
 			for (int p=0; p < num_points; p++)
@@ -908,7 +894,7 @@ bool Engine::loadLevel(std::string filename)
 				float u = input.read_float();
 				float v = input.read_float();
 
-				pos_points[p] = glm::vec2(x, y) + level_norm;
+				pos_points[p] = glm::vec2(x, y);
 				uv_points[p] = glm::vec2(u, v);
 			}
 
@@ -944,16 +930,6 @@ bool Engine::loadLevel(std::string filename)
 			// load parameters and insert object
 			switch (object_type)
 			{
-				case OBJECT_TYPE_COLLISION:
-				{
-					insertStaticCollision(pos_points, uv_points, num_points, z);
-					break;
-				}
-				case OBJECT_TYPE_GEOVIS:
-				{
-					m_geometry->insert(pos_points, uv_points, num_points, z);
-					break;
-				}
 				case OBJECT_TYPE_DESTRUCTIBLE:
 				{
 					insertDestructible(pos_points, uv_points, num_points, z);
@@ -1000,15 +976,6 @@ bool Engine::loadLevel(std::string filename)
 					
 					break;
 				}
-				case OBJECT_TYPE_SLIDER:
-				{
-					float angle = input.read_float();
-					float axis_x = (float) -cos(angle * M_PI / 180.0);
-					float axis_y = (float) -sin(angle * M_PI / 180.0);
-
-					insertSlider(pos_points, uv_points, num_points, glm::vec2(axis_x, axis_y), z);
-					break;
-				}
 				case OBJECT_TYPE_MOVER:
 				{
 					float angle = input.read_float();
@@ -1029,6 +996,125 @@ bool Engine::loadLevel(std::string filename)
 					break;
 			}
 		}
+
+		// num of tiles
+		int num_tiles = input.read_dword();
+
+		// load tiles
+		for (int i = 0; i < num_tiles; i++)
+		{
+			StaticGeometry::Tile tile;
+			tile.color = input.read_dword();
+			tile.type = (StaticGeometry::TileType)input.read_dword();
+
+			int num_top_points = 0;
+
+			switch (tile.type)
+			{
+				case StaticGeometry::TILE_FULL:			num_top_points = 6; break;
+				case StaticGeometry::TILE_LEFT:			num_top_points = 4; break;
+				case StaticGeometry::TILE_RIGHT:		num_top_points = 4; break;
+				case StaticGeometry::TILE_TOP:			num_top_points = 3; break;
+				case StaticGeometry::TILE_BOTTOM:		num_top_points = 3; break;
+				case StaticGeometry::TILE_MID:			num_top_points = 4; break;
+				case StaticGeometry::TILE_CORNER_BL:	num_top_points = 3; break;
+				case StaticGeometry::TILE_CORNER_BR:	num_top_points = 3; break;
+				case StaticGeometry::TILE_CORNER_TL:	num_top_points = 3; break;
+				case StaticGeometry::TILE_CORNER_TR:	num_top_points = 3; break;
+			}
+
+			// top uvs
+			for (int uv = 0; uv < num_top_points; uv++)
+			{
+				float u = input.read_float();
+				float v = input.read_float();
+
+				tile.top_uv[uv] = glm::vec2(u, v);
+			}
+
+			// side uvs
+			for (int uv = 0; uv < 4; uv++)
+			{
+				float u = input.read_float();
+				float v = input.read_float();
+
+				tile.side_uv[uv] = glm::vec2(u, v);
+			}
+
+			tile.shading = input.read_dword();
+
+			m_geometry->insertTile(tile);
+		}
+
+		// wall tilemap
+		{
+			int num_buckets = input.read_dword();
+			for (int b = 0; b < num_buckets; b++)
+			{
+				StaticGeometry::WallBucket bucket;
+
+				bucket.x = input.read_dword();
+				bucket.y = input.read_dword();
+
+				for (int m = 0; m < 64; m++)
+				{
+					bucket.map[m] = input.read_dword();
+				}
+
+				m_geometry->insertWallBucket(bucket);
+			}
+		}
+
+		// floor tilemap
+		{
+			int num_buckets = input.read_dword();
+			for (int b = 0; b < num_buckets; b++)
+			{
+				StaticGeometry::FloorBucket bucket;
+
+				bucket.x = input.read_dword();
+				bucket.y = input.read_dword();
+
+				for (int m = 0; m < 64; m++)
+				{
+					bucket.map[m] = input.read_word();
+				}
+
+				m_geometry->insertFloorBucket(bucket);
+			}
+		}
+
+		// number of edges
+		int num_edges = input.read_dword();
+
+		// edges
+		{
+			for (int e = 0; e < num_edges; e++)
+			{
+				int num_points = input.read_dword();
+				b2Vec2* verts = new b2Vec2[num_points];
+				
+				for (int p = 0; p < num_points; p++)
+				{
+					int ep = input.read_dword();
+					glm::vec2 cp = m_geometry->getPoint(ep);
+					verts[p] = b2Vec2(cp.x, cp.y);
+				}
+
+				b2ChainShape shape;
+				shape.CreateLoop(verts, num_points);
+
+				b2BodyDef body_def;
+				body_def.position.Set(0, 0);
+
+				b2Body* body = m_world->CreateBody(&body_def);
+				body->CreateFixture(&shape, 0.0f);
+
+				m_edges.push_back(body);
+			}
+		}
+
+
 
 		input.close();
 	}

@@ -75,6 +75,15 @@ void StaticGeometry::init(float level_minx, float level_maxx, float level_miny, 
 void StaticGeometry::shutdown()
 {
 	SAFE_DELETE(m_buckets);
+
+	// free tiles
+	std::vector<Tile*>::iterator tiles_it;
+	for (tiles_it = m_tiles.begin(); tiles_it != m_tiles.end(); ++tiles_it)
+	{
+		Tile* tile = *tiles_it;
+		delete tile;
+	}
+	m_tiles.clear();
 }
 
 void StaticGeometry::insert(const glm::vec2* p, const glm::vec2* uv, int num_points, float z)
@@ -460,4 +469,61 @@ void StaticGeometry::get_stats(int* vis_buckets, int* vis_tris)
 			*vis_tris += m_buckets[li + i].num_tris;
 		}
 	}
+}
+
+glm::vec2 StaticGeometry::getPoint(int index)
+{
+	const float tile_width = 1.0f;
+	const float tile_height = 1.4f;
+
+	int x = index % AREA_WIDTH;
+	int y = index / AREA_WIDTH;
+
+	glm::vec2 point;
+
+	point.x = (x * tile_width) / 2.0f;
+	point.y = (y / 2) * tile_height;
+
+	if ((y & 1) == 0)
+	{
+		if ((x & 1) == 0)
+			point.y += tile_height * (15.0 / 70.0);
+	}
+	else
+	{
+		point.y += tile_height * (35.0 / 70.0);
+		if ((x & 1) != 0)
+			point.y += tile_height * (15.0 / 70.0);
+	}
+
+	return point;
+}
+
+int StaticGeometry::insertTile(const StaticGeometry::Tile& tile)
+{
+	Tile* t = new Tile();
+	memcpy(t, &tile, sizeof(Tile));
+
+	m_tiles.push_back(t);
+	return m_tiles.size() - 1;
+}
+
+void StaticGeometry::insertWallBucket(const StaticGeometry::WallBucket& bucket, int bx, int by)
+{
+	int bin = (by / BUCKET_HEIGHT) * (AREA_WIDTH / BUCKET_WIDTH) + (bx / BUCKET_WIDTH);
+
+	WallBucket* b = new WallBucket();
+	memcpy(b, &bucket, sizeof(WallBucket));
+
+	m_wall_buckets[bin] = b;
+}
+
+void StaticGeometry::insertFloorBucket(const StaticGeometry::FloorBucket& bucket, int bx, int by)
+{
+	int bin = (by / BUCKET_HEIGHT) * (AREA_WIDTH / BUCKET_WIDTH) + (bx / BUCKET_WIDTH);
+
+	FloorBucket* b = new FloorBucket();
+	memcpy(b, &bucket, sizeof(FloorBucket));
+
+	m_floor_buckets[bin] = b;
 }

@@ -217,10 +217,8 @@ private:
 	};
 
 
-	static const unsigned int BLBX_ID = 0x424c4258;
-	static const unsigned int BLOX_ID = 0x424c4f58;
-	static const unsigned int LAFX_ID = 0x4c414658;
-	static const unsigned int BLBX_VERSION = 0x00010003;
+	static const unsigned int HSLX_ID = 0x48534C58;
+	static const unsigned int HSLX_VERSION = 0x00010003;
 
 	static const int WINSCREEN_ANIM_DURATION = 1000;
 
@@ -380,6 +378,8 @@ private:
 
 	// collision body removal list
 	std::list<b2Body*> m_destroy_list;
+
+	std::list<b2Body*> m_edges;
 
 	StaticGeometry* m_geometry;
 
