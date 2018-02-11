@@ -48,6 +48,7 @@ public:
 		SHADING_STANDARD = 0,
 		SHADING_ENVIRONMENT = 1,
 		SHADING_SELFLUMINOUS = 2,
+		NUM_SHADING_TYPES,
 	};
 
 	struct Tile
@@ -56,28 +57,24 @@ public:
 		StaticGeometry::TileType type;		
 		StaticGeometry::TopType top_type;		
 		StaticGeometry::ShadingType shading_type;		
-		glm::vec2 top_uv[6];
-		glm::vec2 side_uv[4];
+		glm::vec2 floor_uv[6];
+		glm::vec2 floor_cenuv;
+		glm::vec2 wallmid_uv[4];
+		glm::vec2 walltop_uv[4];
+		glm::vec2 wallbot_uv[4];
 		int side_bits;
 		float top_height;
 		int shading;
 	};
 
 
-	struct WallBucket
+	struct Bucket
 	{
 		int x;
 		int y;
 		int vbi;
+		int num_tris;
 		unsigned int map[8 * 8];
-	};
-
-	struct FloorBucket
-	{
-		int x;
-		int y;
-		int vbi;
-		unsigned short map[8 * 8];
 	};
 
 	static const unsigned int TILE_MASK = 0xffff;
@@ -107,8 +104,7 @@ public:
 	void render(const Shaders::GameShaderContext* context);
 
 	int insertTile(const StaticGeometry::Tile& tile);
-	void insertWallBucket(const StaticGeometry::WallBucket& bucket, int bx, int by);
-	void insertFloorBucket(const StaticGeometry::FloorBucket& bucket, int bx, int by);
+	void insertBucket(const StaticGeometry::Bucket& bucket);
 
 	glm::vec2 getPoint(int index);
 
@@ -143,8 +139,7 @@ private:
 	int m_vis_bucket_yend;
 
 	std::vector<GeoObject> m_geo;
-	WallBucket** m_wall_buckets;
-	FloorBucket** m_floor_buckets;
+	Bucket** m_buckets;
 	std::vector<StaticGeometry::Tile*> m_tiles;
 
 	GLuint m_vbo;

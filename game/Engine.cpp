@@ -1029,29 +1029,49 @@ bool Engine::loadLevel(std::string filename)
 				float u = input.read_float();
 				float v = input.read_float();
 
-				tile.top_uv[uv] = glm::vec2(u, v);
+				tile.floor_uv[uv] = glm::vec2(u, v);
 			}
 
-			// side uvs
+			// wall mid uvs
 			for (int uv = 0; uv < 4; uv++)
 			{
 				float u = input.read_float();
 				float v = input.read_float();
 
-				tile.side_uv[uv] = glm::vec2(u, v);
+				tile.wallmid_uv[uv] = glm::vec2(u, v);
 			}
 
+			// wall top uvs
+			for (int uv = 0; uv < 4; uv++)
+			{
+				float u = input.read_float();
+				float v = input.read_float();
+
+				tile.walltop_uv[uv] = glm::vec2(u, v);
+			}
+
+			// wall bottom uvs
+			for (int uv = 0; uv < 4; uv++)
+			{
+				float u = input.read_float();
+				float v = input.read_float();
+
+				tile.wallbot_uv[uv] = glm::vec2(u, v);
+			}
+
+			tile.top_type = (StaticGeometry::TopType)input.read_dword();
+			tile.top_height = input.read_dword();
 			tile.shading = input.read_dword();
 
 			m_geometry->insertTile(tile);
 		}
 
-		// wall tilemap
+		// buckets
 		{
 			int num_buckets = input.read_dword();
 			for (int b = 0; b < num_buckets; b++)
 			{
-				StaticGeometry::WallBucket bucket;
+				StaticGeometry::Bucket bucket;
 
 				bucket.x = input.read_dword();
 				bucket.y = input.read_dword();
@@ -1061,26 +1081,7 @@ bool Engine::loadLevel(std::string filename)
 					bucket.map[m] = input.read_dword();
 				}
 
-				m_geometry->insertWallBucket(bucket);
-			}
-		}
-
-		// floor tilemap
-		{
-			int num_buckets = input.read_dword();
-			for (int b = 0; b < num_buckets; b++)
-			{
-				StaticGeometry::FloorBucket bucket;
-
-				bucket.x = input.read_dword();
-				bucket.y = input.read_dword();
-
-				for (int m = 0; m < 64; m++)
-				{
-					bucket.map[m] = input.read_word();
-				}
-
-				m_geometry->insertFloorBucket(bucket);
+				m_geometry->insertBucket(bucket);
 			}
 		}
 
@@ -1113,8 +1114,6 @@ bool Engine::loadLevel(std::string filename)
 				m_edges.push_back(body);
 			}
 		}
-
-
 
 		input.close();
 	}

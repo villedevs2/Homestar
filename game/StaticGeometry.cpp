@@ -64,7 +64,7 @@ void StaticGeometry::init(float level_minx, float level_maxx, float level_miny, 
 	m_bucket_min_y = bucket_miny * m_bucket_height;
 	m_bucket_max_y = bucket_maxy * m_bucket_height;
 
-	m_buckets = new Bucket[m_num_buckets_x * m_num_buckets_y];
+	m_buckets = new Bucket*[m_num_buckets_x * m_num_buckets_y];
 
 	Debug::log(str(fmt::Format("Level MinX: {:f}, MaxX: {:f}, MinY: {:f}, MaxY: {:f}") << level_minx << level_maxx << level_miny << level_maxy));
 	Debug::log(str(fmt::Format("Buckets X: {:d}, Y: {:d}") << m_num_buckets_x << m_num_buckets_y));
@@ -86,6 +86,7 @@ void StaticGeometry::shutdown()
 	m_tiles.clear();
 }
 
+#if 0
 void StaticGeometry::insert(const glm::vec2* p, const glm::vec2* uv, int num_points, float z)
 {
 	GeoObject geo;
@@ -412,6 +413,12 @@ void StaticGeometry::tesselate()
 
 	tempvb.clear();
 }
+#endif
+
+void StaticGeometry::tesselate()
+{
+
+}
 
 void StaticGeometry::update(float x1, float x2, float y1, float y2)
 {
@@ -435,13 +442,17 @@ void StaticGeometry::render(const Shaders::GameShaderContext* context)
 	glVertexAttribPointer(context->tex_coord, 2, GL_FLOAT, false, 20, (void*)12);
 	glEnableVertexAttribArray(context->tex_coord);
 
-	for (int j=m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
+	// buckets
+	for (int j = m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
 	{
 		int li = j * m_num_buckets_x;
-		for (int i=m_vis_bucket_xstart; i <= m_vis_bucket_xend; i++)
+		for (int i = m_vis_bucket_xstart; i <= m_vis_bucket_xend; i++)
 		{
-			const Bucket* bucket = &m_buckets[li + i];
-			glDrawArrays(GL_TRIANGLES, bucket->vbi * 3, bucket->num_tris * 3);
+			const Bucket* bucket = m_buckets[li + i];
+			if (bucket != nullptr && bucket->num_tris > 0)
+			{
+				glDrawArrays(GL_TRIANGLES, bucket->vbi * 3, bucket->num_tris * 3);
+			}
 		}
 	}
 
@@ -461,12 +472,12 @@ void StaticGeometry::get_stats(int* vis_buckets, int* vis_tris)
 	*vis_buckets = (m_vis_bucket_yend - m_vis_bucket_ystart) * (m_vis_bucket_xend - m_vis_bucket_xstart);
 	*vis_tris = 0;
 
-	for (int j=m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
+	for (int j = m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
 	{
 		int li = j * m_num_buckets_x;
-		for (int i=m_vis_bucket_xstart; i <= m_vis_bucket_xend; i++)
+		for (int i = m_vis_bucket_xstart; i <= m_vis_bucket_xend; i++)
 		{
-			*vis_tris += m_buckets[li + i].num_tris;
+			*vis_tris += m_buckets[li + i]->num_tris;
 		}
 	}
 }
@@ -508,22 +519,14 @@ int StaticGeometry::insertTile(const StaticGeometry::Tile& tile)
 	return m_tiles.size() - 1;
 }
 
-void StaticGeometry::insertWallBucket(const StaticGeometry::WallBucket& bucket, int bx, int by)
+void StaticGeometry::insertBucket(const StaticGeometry::Bucket& bucket)
 {
-	int bin = (by / BUCKET_HEIGHT) * (AREA_WIDTH / BUCKET_WIDTH) + (bx / BUCKET_WIDTH);
+	int bin = (bucket.y / BUCKET_HEIGHT) * (AREA_WIDTH / BUCKET_WIDTH) + (bucket.x / BUCKET_WIDTH);
 
-	WallBucket* b = new WallBucket();
-	memcpy(b, &bucket, sizeof(WallBucket));
+	assert(m_buckets[bin] == nullptr);
 
-	m_wall_buckets[bin] = b;
-}
+	Bucket* b = new Bucket();
+	memcpy(b, &bucket, sizeof(Bucket));
 
-void StaticGeometry::insertFloorBucket(const StaticGeometry::FloorBucket& bucket, int bx, int by)
-{
-	int bin = (by / BUCKET_HEIGHT) * (AREA_WIDTH / BUCKET_WIDTH) + (bx / BUCKET_WIDTH);
-
-	FloorBucket* b = new FloorBucket();
-	memcpy(b, &bucket, sizeof(FloorBucket));
-
-	m_floor_buckets[bin] = b;
+	m_buckets[bin] = b;
 }

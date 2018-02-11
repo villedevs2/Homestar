@@ -218,7 +218,7 @@ private:
 
 
 	static const unsigned int HSLX_ID = 0x48534C58;
-	static const unsigned int HSLX_VERSION = 0x00010003;
+	static const unsigned int HSLX_VERSION = 0x00010005;
 
 	static const int WINSCREEN_ANIM_DURATION = 1000;
 

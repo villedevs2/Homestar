@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3467010E-4863-47DB-970F-618D579F9596}</ProjectGuid>
+    <ProjectGuid>{F4ED6CD6-03B5-4A26-BE2E-955DF9E25D1B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Homestar</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -104,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)boost;$(ProjectDir)zlib;$(ProjectDir)rapidxml-1.13;$(ProjectDir)format;$(ProjectDir)glew-2.0.0\include;$(ProjectDir)glm;$(ProjectDir)Box2D;$(ProjectDir)windows;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)boost;$(ProjectDir)zlib;$(ProjectDir)rapidxml-1.13;$(ProjectDir)format;$(ProjectDir)glew-2.1.0\include;$(ProjectDir)glm;$(ProjectDir)Box2D;$(ProjectDir)windows;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)boost;$(ProjectDir)zlib;$(ProjectDir)rapidxml-1.13;$(ProjectDir)format;$(ProjectDir)glew-2.0.0\include;$(ProjectDir)glm;$(ProjectDir)Box2D;$(ProjectDir)windows;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)boost;$(ProjectDir)zlib;$(ProjectDir)rapidxml-1.13;$(ProjectDir)format;$(ProjectDir)glew-2.1.0\include;$(ProjectDir)glm;$(ProjectDir)Box2D;$(ProjectDir)windows;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
