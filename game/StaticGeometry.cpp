@@ -12,8 +12,9 @@ StaticGeometry::~StaticGeometry()
 {
 }
 
-void StaticGeometry::init(float level_minx, float level_maxx, float level_miny, float level_maxy)
+void StaticGeometry::init()
 {
+	/*
 	m_bucket_min_x = 0.0f;
 	m_bucket_max_x = 0.0f;
 	m_bucket_min_y = 0.0f;
@@ -63,19 +64,23 @@ void StaticGeometry::init(float level_minx, float level_maxx, float level_miny, 
 	m_bucket_max_x = bucket_maxx * m_bucket_width;
 	m_bucket_min_y = bucket_miny * m_bucket_height;
 	m_bucket_max_y = bucket_maxy * m_bucket_height;
+	
 
 	m_buckets = new Bucket*[m_num_buckets_x * m_num_buckets_y];
 
 	Debug::log(str(fmt::Format("Level MinX: {:f}, MaxX: {:f}, MinY: {:f}, MaxY: {:f}") << level_minx << level_maxx << level_miny << level_maxy));
 	Debug::log(str(fmt::Format("Buckets X: {:d}, Y: {:d}") << m_num_buckets_x << m_num_buckets_y));
 	Debug::log(str(fmt::Format("Bucket MinX: {:f}, MaxX: {:f}, MinY: {:f}, MaxY: {:f}") << (float)(bucket_minx * m_bucket_width) << (float)(bucket_maxx * m_bucket_width) << (float)(bucket_miny * m_bucket_height) << (float)(bucket_maxy * m_bucket_height)));
+	*/
 
+	for (int i = 0; i < ((AREA_WIDTH / BUCKET_WIDTH) * (AREA_HEIGHT / BUCKET_HEIGHT)); i++)
+	{
+		m_buckets[i] = nullptr;
+	}
 }
 
 void StaticGeometry::shutdown()
 {
-	SAFE_DELETE(m_buckets);
-
 	// free tiles
 	std::vector<Tile*>::iterator tiles_it;
 	for (tiles_it = m_tiles.begin(); tiles_it != m_tiles.end(); ++tiles_it)
@@ -417,20 +422,103 @@ void StaticGeometry::tesselate()
 
 void StaticGeometry::tesselate()
 {
+	if (glIsBuffer(m_vbo))
+		glDeleteBuffers(1, &m_vbo);
 
+	glGenBuffers(1, &m_vbo);
+
+	int numgeo = m_geo.size();
+
+	std::vector<float> tempvb;
+
+	int tri_index = 0;
+
+	for (int j = 0; j < (AREA_HEIGHT / BUCKET_HEIGHT); j++)
+	{
+		for (int i = 0; i < (AREA_WIDTH / BUCKET_WIDTH); i++)
+		{
+			int bin = (j) * (AREA_WIDTH / BUCKET_WIDTH) + (i);
+			if (m_buckets[bin] != nullptr)
+			{
+				float bx = i * BUCKET_WIDTH;
+				float by = (j * BUCKET_HEIGHT) / 1.4f;
+				float bh = BUCKET_HEIGHT / 1.4f;
+				float z = 1000.0f;
+
+				tempvb.push_back(bx);
+				tempvb.push_back(by);
+				tempvb.push_back(z);
+				tempvb.push_back(0.0f);
+				tempvb.push_back(0.0f);
+				tempvb.push_back(bx + BUCKET_WIDTH);
+				tempvb.push_back(by);
+				tempvb.push_back(z);
+				tempvb.push_back(1.0f);
+				tempvb.push_back(0.0f);
+				tempvb.push_back(bx);
+				tempvb.push_back(by + bh);
+				tempvb.push_back(z);
+				tempvb.push_back(0.0f);
+				tempvb.push_back(1.0f);
+
+				tempvb.push_back(bx);
+				tempvb.push_back(by + bh);
+				tempvb.push_back(z);
+				tempvb.push_back(0.0f);
+				tempvb.push_back(1.0f);
+				tempvb.push_back(bx + BUCKET_WIDTH);
+				tempvb.push_back(by);
+				tempvb.push_back(z);
+				tempvb.push_back(1.0f);
+				tempvb.push_back(0.0f);
+				tempvb.push_back(bx + BUCKET_WIDTH);
+				tempvb.push_back(by + bh);
+				tempvb.push_back(z);
+				tempvb.push_back(1.0f);
+				tempvb.push_back(1.0f);
+
+				m_buckets[bin]->vbi = tri_index;
+				m_buckets[bin]->num_tris = 2;
+
+				tri_index += 2;
+			}
+		}
+	}
+
+
+	// calculate total num of tris
+	int vb_size = tempvb.size();
+
+
+	// allocate temps
+	float* vb = new float[vb_size];
+
+	int vbi = 0;
+	for (int i = 0; i < vb_size; i++)
+	{
+		vb[vbi++] = tempvb[i];
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, (vbi * sizeof(float)), vb, GL_STATIC_DRAW);
+
+	delete[] vb;
+	m_geo.clear();
+
+	tempvb.clear();
 }
 
 void StaticGeometry::update(float x1, float x2, float y1, float y2)
 {
 	// calculate visible buckets
-	m_vis_bucket_xstart = (x1 - m_bucket_min_x) / m_bucket_width;
-	m_vis_bucket_xend = (x2 - m_bucket_min_x) / m_bucket_width;
-	m_vis_bucket_ystart = (y1 - m_bucket_min_y) / m_bucket_height;
-	m_vis_bucket_yend = (y2 - m_bucket_min_y) / m_bucket_height;
+	m_vis_bucket_xstart = (x1 - 0) / m_bucket_width;
+	m_vis_bucket_xend = (x2 - 0) / m_bucket_width;
+	m_vis_bucket_ystart = (y1 - 0) / (m_bucket_height / 1.4f);
+	m_vis_bucket_yend = (y2 - 0) / (m_bucket_height / 1.4f);
 	if (m_vis_bucket_xstart < 0) m_vis_bucket_xstart = 0;
-	if (m_vis_bucket_xend >= m_num_buckets_x) m_vis_bucket_xend = m_num_buckets_x - 1;
+	if (m_vis_bucket_xend >= (AREA_WIDTH/BUCKET_WIDTH)) m_vis_bucket_xend = (AREA_WIDTH/BUCKET_WIDTH) - 1;
 	if (m_vis_bucket_ystart < 0) m_vis_bucket_ystart = 0;
-	if (m_vis_bucket_yend >= m_num_buckets_y) m_vis_bucket_yend = m_num_buckets_y - 1;
+	if (m_vis_bucket_yend >= (AREA_HEIGHT/BUCKET_HEIGHT)) m_vis_bucket_yend = (AREA_HEIGHT/BUCKET_HEIGHT) - 1;
 }
 
 void StaticGeometry::render(const Shaders::GameShaderContext* context)
@@ -445,7 +533,7 @@ void StaticGeometry::render(const Shaders::GameShaderContext* context)
 	// buckets
 	for (int j = m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
 	{
-		int li = j * m_num_buckets_x;
+		int li = j * (AREA_WIDTH/BUCKET_WIDTH);
 		for (int i = m_vis_bucket_xstart; i <= m_vis_bucket_xend; i++)
 		{
 			const Bucket* bucket = m_buckets[li + i];
@@ -474,10 +562,13 @@ void StaticGeometry::get_stats(int* vis_buckets, int* vis_tris)
 
 	for (int j = m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
 	{
-		int li = j * m_num_buckets_x;
+		int li = j * (AREA_WIDTH / BUCKET_WIDTH);
 		for (int i = m_vis_bucket_xstart; i <= m_vis_bucket_xend; i++)
 		{
-			*vis_tris += m_buckets[li + i]->num_tris;
+			if (m_buckets[li + i] != nullptr)
+			{
+				*vis_tris += m_buckets[li + i]->num_tris;
+			}
 		}
 	}
 }
@@ -521,12 +612,14 @@ int StaticGeometry::insertTile(const StaticGeometry::Tile& tile)
 
 void StaticGeometry::insertBucket(const StaticGeometry::Bucket& bucket)
 {
-	int bin = (bucket.y / BUCKET_HEIGHT) * (AREA_WIDTH / BUCKET_WIDTH) + (bucket.x / BUCKET_WIDTH);
+	int bin = bucket.y * (AREA_WIDTH / BUCKET_WIDTH) + bucket.x;
 
 	assert(m_buckets[bin] == nullptr);
 
 	Bucket* b = new Bucket();
 	memcpy(b, &bucket, sizeof(Bucket));
+
+	Debug::log(str(fmt::Format("Insert bucket: bin {:d}, X: {:d}, Y: {:d}") << bin << bucket.x << bucket.y));
 
 	m_buckets[bin] = b;
 }

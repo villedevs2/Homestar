@@ -94,7 +94,7 @@ public:
 	StaticGeometry();
 	~StaticGeometry();
 
-	void init(float level_minx, float level_maxx, float level_miny, float level_maxy);
+	void init();
 	void shutdown();
 	void get_stats(int* vis_buckets, int* vis_tris);
 	void insert(const glm::vec2* p, const glm::vec2* uv, int num_points, float z);
@@ -122,14 +122,6 @@ private:
 	bool point_side(const glm::vec4& v, int side, float value);
 	float line_intersect(const glm::vec4& v1, const glm::vec4& v2, int side, float value);
 
-	float m_bucket_min_x;
-	float m_bucket_max_x;
-	float m_bucket_min_y;
-	float m_bucket_max_y;
-	
-	int m_num_buckets_x;
-	int m_num_buckets_y;
-
 	float m_bucket_width;
 	float m_bucket_height;
 
@@ -139,7 +131,7 @@ private:
 	int m_vis_bucket_yend;
 
 	std::vector<GeoObject> m_geo;
-	Bucket** m_buckets;
+	Bucket* m_buckets[(AREA_WIDTH/BUCKET_WIDTH)*(AREA_HEIGHT/BUCKET_WIDTH)];
 	std::vector<StaticGeometry::Tile*> m_tiles;
 
 	GLuint m_vbo;

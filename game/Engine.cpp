@@ -837,6 +837,13 @@ bool Engine::loadLevel(std::string filename)
 
 
 
+		m_geometry->init();
+
+		m_level_min_x = 0;
+		m_level_max_x = StaticGeometry::AREA_WIDTH;
+		m_level_min_y = 0;
+		m_level_max_y = StaticGeometry::AREA_HEIGHT;
+
 		/*
 		// load level bounds
 		m_level_min_x = input.read_float();
@@ -997,75 +1004,6 @@ bool Engine::loadLevel(std::string filename)
 			}
 		}
 
-		// num of tiles
-		int num_tiles = input.read_dword();
-
-		// load tiles
-		for (int i = 0; i < num_tiles; i++)
-		{
-			StaticGeometry::Tile tile;
-			tile.color = input.read_dword();
-			tile.type = (StaticGeometry::TileType)input.read_dword();
-
-			int num_top_points = 0;
-
-			switch (tile.type)
-			{
-				case StaticGeometry::TILE_FULL:			num_top_points = 6; break;
-				case StaticGeometry::TILE_LEFT:			num_top_points = 4; break;
-				case StaticGeometry::TILE_RIGHT:		num_top_points = 4; break;
-				case StaticGeometry::TILE_TOP:			num_top_points = 3; break;
-				case StaticGeometry::TILE_BOTTOM:		num_top_points = 3; break;
-				case StaticGeometry::TILE_MID:			num_top_points = 4; break;
-				case StaticGeometry::TILE_CORNER_BL:	num_top_points = 3; break;
-				case StaticGeometry::TILE_CORNER_BR:	num_top_points = 3; break;
-				case StaticGeometry::TILE_CORNER_TL:	num_top_points = 3; break;
-				case StaticGeometry::TILE_CORNER_TR:	num_top_points = 3; break;
-			}
-
-			// top uvs
-			for (int uv = 0; uv < num_top_points; uv++)
-			{
-				float u = input.read_float();
-				float v = input.read_float();
-
-				tile.floor_uv[uv] = glm::vec2(u, v);
-			}
-
-			// wall mid uvs
-			for (int uv = 0; uv < 4; uv++)
-			{
-				float u = input.read_float();
-				float v = input.read_float();
-
-				tile.wallmid_uv[uv] = glm::vec2(u, v);
-			}
-
-			// wall top uvs
-			for (int uv = 0; uv < 4; uv++)
-			{
-				float u = input.read_float();
-				float v = input.read_float();
-
-				tile.walltop_uv[uv] = glm::vec2(u, v);
-			}
-
-			// wall bottom uvs
-			for (int uv = 0; uv < 4; uv++)
-			{
-				float u = input.read_float();
-				float v = input.read_float();
-
-				tile.wallbot_uv[uv] = glm::vec2(u, v);
-			}
-
-			tile.top_type = (StaticGeometry::TopType)input.read_dword();
-			tile.top_height = input.read_dword();
-			tile.shading = input.read_dword();
-
-			m_geometry->insertTile(tile);
-		}
-
 		// buckets
 		{
 			int num_buckets = input.read_dword();
@@ -1078,7 +1016,7 @@ bool Engine::loadLevel(std::string filename)
 
 				for (int m = 0; m < 64; m++)
 				{
-					bucket.map[m] = input.read_dword();
+					bucket.map[m] = input.read_byte();
 				}
 
 				m_geometry->insertBucket(bucket);
@@ -1715,13 +1653,13 @@ void Engine::onRender()
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
-		glEnable(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 		glViewport(0, 0, Screen::getWidth(), Screen::getHeight());
 		glScissor(0, 0, Screen::getWidth(), Screen::getHeight());
 
 		glClearDepthf(1.0f);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(m_game_shader->shader);
 
@@ -2215,7 +2153,7 @@ void Engine::onUpdate(int time)
 			updateMovers(time);
 
 			// update physics
-			float gf = 100.0f;
+			float gf = 1.0f;
 			gx = (float) sin(m_player_angle * M_PI / 180.0f) * gf;
 			gy = (float) cos(m_player_angle * M_PI / 180.0f) * gf;
 	
@@ -2360,8 +2298,9 @@ void Engine::onUpdate(int time)
 		).c_str());
 	*/
 	
-	m_sensors->setText(str(fmt::Format("Angle: {:f}\nVis bodies: {:d}, particles: {:d}\nBuckets: {:d}, Bucket tris: {:d}\nPlayer angle: {:f}\nMS: {:d}, F2FMS: {:d}, FPS: {:d}")
+	m_sensors->setText(str(fmt::Format("Angle: {:f}\nScrollX: {:f}, ScrollY: {:f}, Vis bodies: {:d}, particles: {:d}\nBuckets: {:d}, Bucket tris: {:d}\nPlayer angle: {:f}\nMS: {:d}, F2FMS: {:d}, FPS: {:d}")
 		<< m_player_angle
+		<< m_scrollpos_x << m_scrollpos_y
 		<< m_vis_dynobjs.size() << parts
 		<< num_buckets << bucket_tris
 		<< aa 

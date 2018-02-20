@@ -62,7 +62,7 @@ private:
 	Shaders::UIShaderContext m_ui_shader;
 	Shaders::ParticleShaderContext m_particle_shader;
 
-	bool m_uiflipped;
-	timeunit m_uiflip_timer;
-	float m_uiflip_angle;
+	//bool m_uiflipped;
+	//timeunit m_uiflip_timer;
+	//float m_uiflip_angle;
 };

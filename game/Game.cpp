@@ -10,8 +10,8 @@ Game::Game()
 	// initial gamestate
 	m_gamestate = GAMESTATE_MENU_INIT;
 
-	m_uiflipped = false;
-	m_uiflip_timer = 0;
+	//m_uiflipped = false;
+	//m_uiflip_timer = 0;
 }
 
 Game::~Game()
@@ -146,6 +146,7 @@ void Game::changeState(Game::GameState newstate)
 void Game::onUpdate(int time)
 {
 	// increase flip timer if we're upside down
+	/*
 	float angle = fabs(m_uiflip_angle);
 	if ((!m_uiflipped && angle > 135.0f) || (m_uiflipped && angle < 45.0f))
 	{
@@ -156,6 +157,7 @@ void Game::onUpdate(int time)
 			m_uiflipped = !m_uiflipped;
 		}
 	}
+	*/
 
 	switch (m_gamestate)
 	{
@@ -178,7 +180,7 @@ void Game::onUpdate(int time)
 				changeState(GAMESTATE_INGAME_LOAD);
 				m_loader->setPosition(0);
 
-				const char* level_name[2] = {"block_level_1.blb", "testlevel5.blb"};
+				const char* level_name[2] = {"level1.level", "level1.level"};
 
 				m_engine->init(level_name[level]);
 				m_engine->setShaders(&m_game_shader, &m_ui_shader, &m_particle_shader);
@@ -217,9 +219,10 @@ void Game::onUpdate(int time)
 
 void Game::onRender()
 {
+	/*
 	if (m_uiflipped)
 		glUniform4f(m_ui_shader.transform, -1.0f, -1.0f, 0.0f, 0.0f);
-	else
+	else*/
 		glUniform4f(m_ui_shader.transform, 1.0f, 1.0f, 0.0f, 0.0f);
 
 	switch (m_gamestate)
@@ -254,11 +257,13 @@ void Game::onRender()
 
 void Game::onTouch(UI::UITouchEvent type, float x, float y)
 {
+	/*
 	if (m_uiflipped)
 	{
 		x = Screen::getWidth() - x;
 		y = Screen::getHeight() - y;
 	}
+	*/
 
 	switch (m_gamestate)
 	{
@@ -341,7 +346,7 @@ void Game::onSensor(float *sensor_data)
 
 	if (sensor_data[2] <= 8.0f)	// deadzone, when >8.0f the phone is almost pointing up
 	{
-		m_uiflip_angle = ang;
+		//m_uiflip_angle = ang;
 
 		if (m_gamestate == GAMESTATE_INGAME)
 		{

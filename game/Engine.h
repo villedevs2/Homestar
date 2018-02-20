@@ -118,12 +118,10 @@ private:
 	enum ObjectType
 	{
 		OBJECT_TYPE_INVALID			= 0,
-		OBJECT_TYPE_COLLISION		= 1,
-		OBJECT_TYPE_GEOVIS			= 2,
-		OBJECT_TYPE_TRIGGER			= 3,
-		OBJECT_TYPE_SLIDER			= 4,
-		OBJECT_TYPE_DESTRUCTIBLE	= 5,
-		OBJECT_TYPE_MOVER			= 6,
+		OBJECT_TYPE_TRIGGER			= 1,
+		OBJECT_TYPE_DESTRUCTIBLE	= 2,
+		OBJECT_TYPE_MOVER			= 3,
+		OBJECT_TYPE_ENEMY			= 4,
 	};
 
 	enum CollectableType
@@ -218,7 +216,7 @@ private:
 
 
 	static const unsigned int HSLX_ID = 0x48534C58;
-	static const unsigned int HSLX_VERSION = 0x00010005;
+	static const unsigned int HSLX_VERSION = 0x00010006;
 
 	static const int WINSCREEN_ANIM_DURATION = 1000;
 
