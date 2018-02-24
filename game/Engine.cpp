@@ -1536,6 +1536,7 @@ void Engine::BeginContact(b2Contact* contact)
 
 				// make sparkle animation
 #if ENABLE_PARTICLES
+				/*
 				b2Vec2 goal_position = body_b->GetPosition();
 
 				ParticleSys2::Emitter emitter;
@@ -1551,6 +1552,7 @@ void Engine::BeginContact(b2Contact* contact)
 				m_sparkles->setEmitter(emitter);
 				
 				m_sparkles->emit(95);
+				*/
 #endif
 				break;
 			}
@@ -2153,16 +2155,21 @@ void Engine::onUpdate(int time)
 			updateMovers(time);
 
 			// update physics
-			float gf = 1.0f;
+			float gf = 10.0f;
 			gx = (float) sin(m_player_angle * M_PI / 180.0f) * gf;
 			gy = (float) cos(m_player_angle * M_PI / 180.0f) * gf;
 	
-			b2Vec2 gravity_vector;
-			gravity_vector = b2Vec2(gx, gy);
+			b2Vec2 player_velocity_vector;
+			player_velocity_vector = b2Vec2(gx, gy);
+
+			// set player velocity vector
+			m_player_body->SetLinearVelocity(player_velocity_vector);
 			
 			//gravity_vector = b2Vec2(0.0f, gf);		// always down grav after goal
 
-			m_world->SetGravity(gravity_vector);
+			// zero gravity
+			m_world->SetGravity(b2Vec2(0,0));
+
 			m_world->Step(1.0f/60.0f, 6, 2);
 
 			// calculate screen scroll position

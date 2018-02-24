@@ -420,8 +420,111 @@ void StaticGeometry::tesselate()
 }
 #endif
 
+int StaticGeometry::tesselateTile(TileCategory tile, float x, float y, std::vector<float>& vb)
+{
+	int num_tris = 0;
+
+	float tile_width = 1.0f;
+	float tile_height = 1.0f;
+
+	float z = 100.0f;
+
+	glm::vec3 p[6];
+	glm::vec2 uv[6];
+
+	p[0] = glm::vec3(x, y + (tile_height * (15.0 / 50.0)), z);
+	p[1] = glm::vec3(x, y + (tile_height * (35.0 / 50.0)), z);
+	p[2] = glm::vec3(x + (tile_width * 0.5), y + (tile_height * 1.0), z);
+	p[3] = glm::vec3(x + tile_width, y + (tile_height * (35.0 / 50.0)), z);
+	p[4] = glm::vec3(x + tile_width, y + (tile_height * (15.0 / 50.0)), z);
+	p[5] = glm::vec3(x + (tile_width * 0.5), y, z);
+
+	float uv_u = 0.0f;
+	float uv_v = 0.0f;
+	float uv_w = 1.0f / 8.0;
+	float uv_h = 1.0f / 8.0;
+
+	switch (tile)
+	{
+		case TILE_FLOOR1:
+		case TILE_FLOOR2:
+		case TILE_FLOOR3:
+		case TILE_FLOOR4:
+		case TILE_FLOOR5:
+		case TILE_FLOOR6:
+			uv_u = 0.125f;
+			uv_v = 0.0f;
+			break;
+
+		case TILE_WALL1:
+		case TILE_WALL2:
+		case TILE_WALL3:
+		case TILE_WALL4:
+		case TILE_WALL5:
+		case TILE_WALL6:
+			uv_u = 0.25f;
+			uv_v = 0.0f;
+			break;
+
+		case TILE_ENV1:
+		case TILE_ENV2:
+		case TILE_ENV3:
+		case TILE_ENV4:
+		case TILE_ENV5:
+		case TILE_ENV6:
+			uv_u = 0.75f;
+			uv_u = 0.0f;
+			break;
+
+		case TILE_TOWER1:
+		case TILE_TOWER2:
+		case TILE_TOWER3:
+		case TILE_TOWER4:
+		case TILE_TOWER5:
+		case TILE_TOWER6:
+			uv_u = 0.625f;
+			uv_v = 0.0f;
+			break;
+	}
+
+
+	uv[0] = glm::vec2(uv_u, uv_v + (uv_h * (15.0 / 50.0)));
+	uv[1] = glm::vec2(uv_u, uv_v + (uv_h * (35.0 / 50.0)));
+	uv[2] = glm::vec2(uv_u + (uv_w * 0.5), uv_v + (uv_h * 1.0));
+	uv[3] = glm::vec2(uv_u + uv_w, uv_v + (uv_h * (35.0 / 50.0)));
+	uv[4] = glm::vec2(uv_u + uv_w, uv_v + (uv_h * (15.0 / 50.0)));
+	uv[5] = glm::vec2(uv_u + (uv_w * 0.5), uv_v);
+
+	//glm::vec3 pcen = glm::vec3(x + (tile_width * 0.5), y + (tile_height * 0.5), 0.0f);
+
+	for (int point = 2; point < 6; point++)
+	{
+		vb.push_back(p[0].x);
+		vb.push_back(p[0].y);
+		vb.push_back(p[0].z);
+		vb.push_back(uv[0].x);
+		vb.push_back(uv[0].y);
+		vb.push_back(p[point-1].x);
+		vb.push_back(p[point-1].y);
+		vb.push_back(p[point-1].z);
+		vb.push_back(uv[point-1].x);
+		vb.push_back(uv[point-1].y);
+		vb.push_back(p[point].x);
+		vb.push_back(p[point].y);
+		vb.push_back(p[point].z);
+		vb.push_back(uv[point].x);
+		vb.push_back(uv[point].y);
+
+		num_tris++;
+	}
+
+	return num_tris;
+}
+
 void StaticGeometry::tesselate()
 {
+	float linediv = (50.0 / 70.0) * 2;
+
 	if (glIsBuffer(m_vbo))
 		glDeleteBuffers(1, &m_vbo);
 
@@ -440,10 +543,11 @@ void StaticGeometry::tesselate()
 			int bin = (j) * (AREA_WIDTH / BUCKET_WIDTH) + (i);
 			if (m_buckets[bin] != nullptr)
 			{
+				/*
 				float bx = i * BUCKET_WIDTH;
 				float by = (j * BUCKET_HEIGHT) / 1.4f;
 				float bh = BUCKET_HEIGHT / 1.4f;
-				float z = 1000.0f;
+				float z = 100.0f;
 
 				tempvb.push_back(bx);
 				tempvb.push_back(by);
@@ -481,6 +585,33 @@ void StaticGeometry::tesselate()
 				m_buckets[bin]->num_tris = 2;
 
 				tri_index += 2;
+				*/
+
+				int bx = i * BUCKET_WIDTH;
+				int by = j * BUCKET_HEIGHT;
+
+				int num_tris = 0;
+
+				for (int y = 0; y < BUCKET_HEIGHT; y++)
+				{
+					for (int x = 0; x < BUCKET_WIDTH; x++)
+					{
+						int tile = m_buckets[bin]->map[y * BUCKET_WIDTH + x];
+						if (tile != TILE_EMPTY)
+						{
+							float tx = bx + x;
+							float ty = (by + y) / linediv;
+							if ((by + y) & 1)
+								tx += 0.5f;
+
+							num_tris += tesselateTile((TileCategory)tile, tx, ty, tempvb);
+						}
+					}
+				}
+
+				m_buckets[bin]->vbi = tri_index;
+				m_buckets[bin]->num_tris = num_tris;
+				tri_index += num_tris;
 			}
 		}
 	}
@@ -510,11 +641,13 @@ void StaticGeometry::tesselate()
 
 void StaticGeometry::update(float x1, float x2, float y1, float y2)
 {
+	float linediv = (50.0 / 70.0) * 2;
+
 	// calculate visible buckets
 	m_vis_bucket_xstart = (x1 - 0) / m_bucket_width;
 	m_vis_bucket_xend = (x2 - 0) / m_bucket_width;
-	m_vis_bucket_ystart = (y1 - 0) / (m_bucket_height / 1.4f);
-	m_vis_bucket_yend = (y2 - 0) / (m_bucket_height / 1.4f);
+	m_vis_bucket_ystart = (y1 - 0) / (m_bucket_height / linediv);
+	m_vis_bucket_yend = (y2 - 0) / (m_bucket_height / linediv);
 	if (m_vis_bucket_xstart < 0) m_vis_bucket_xstart = 0;
 	if (m_vis_bucket_xend >= (AREA_WIDTH/BUCKET_WIDTH)) m_vis_bucket_xend = (AREA_WIDTH/BUCKET_WIDTH) - 1;
 	if (m_vis_bucket_ystart < 0) m_vis_bucket_ystart = 0;
@@ -578,8 +711,8 @@ glm::vec2 StaticGeometry::getPoint(int index)
 	const float tile_width = 1.0f;
 	const float tile_height = 1.4f;
 
-	int x = index % AREA_WIDTH;
-	int y = index / AREA_WIDTH;
+	int x = index % (AREA_WIDTH * 2);
+	int y = index / (AREA_WIDTH * 2);
 
 	glm::vec2 point;
 

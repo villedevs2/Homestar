@@ -14,7 +14,7 @@ static HWND hwnd;
 static HDC hdc;
 static HGLRC gl_context;
 
-static float rotangle = 0;
+static float rotangle = 180.0f;
 static int frames = 0;
 
 static float sensor_data[9] = {0.0f, 0.0f, 0.0f,

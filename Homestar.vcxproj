@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3467010E-4863-47DB-970F-618D579F9596}</ProjectGuid>
+    <ProjectGuid>{F4ED6CD6-03B5-4A26-BE2E-955DF9E25D1B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Homestar</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>

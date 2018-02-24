@@ -12,18 +12,32 @@
 class StaticGeometry
 {
 public:
-	enum TileType
+	enum TileCategory
 	{
-		TILE_FULL = 0,
-		TILE_LEFT = 1,
-		TILE_RIGHT = 2,
-		TILE_TOP = 3,
-		TILE_BOTTOM = 4,
-		TILE_MID = 5,
-		TILE_CORNER_TL = 6,
-		TILE_CORNER_TR = 7,
-		TILE_CORNER_BL = 8,
-		TILE_CORNER_BR = 9,
+		TILE_FLOOR1 = 0,
+		TILE_FLOOR2 = 1,
+		TILE_FLOOR3 = 2,
+		TILE_FLOOR4 = 3,
+		TILE_FLOOR5 = 4,
+		TILE_FLOOR6 = 5,
+		TILE_WALL1 = 6,
+		TILE_WALL2 = 7,
+		TILE_WALL3 = 8,
+		TILE_WALL4 = 9,
+		TILE_WALL5 = 10,
+		TILE_WALL6 = 11,
+		TILE_TOWER1 = 12,
+		TILE_TOWER2 = 13,
+		TILE_TOWER3 = 14,
+		TILE_TOWER4 = 15,
+		TILE_TOWER5 = 16,
+		TILE_TOWER6 = 17,
+		TILE_ENV1 = 18,
+		TILE_ENV2 = 19,
+		TILE_ENV3 = 20,
+		TILE_ENV4 = 21,
+		TILE_ENV5 = 22,
+		TILE_ENV6 = 23
 	};
 
 	enum TileSide
@@ -54,7 +68,6 @@ public:
 	struct Tile
 	{
 		unsigned int color;
-		StaticGeometry::TileType type;		
 		StaticGeometry::TopType top_type;		
 		StaticGeometry::ShadingType shading_type;		
 		glm::vec2 floor_uv[6];
@@ -77,8 +90,8 @@ public:
 		unsigned int map[8 * 8];
 	};
 
-	static const unsigned int TILE_MASK = 0xffff;
-	static const unsigned int TILE_EMPTY = 0xffff;
+	static const unsigned int TILE_MASK = 0xff;
+	static const unsigned int TILE_EMPTY = 0xff;
 	static const unsigned int Z_MASK = 0xff0000;
 	static const unsigned int Z_SHIFT = 16;
 
@@ -100,6 +113,7 @@ public:
 	void insert(const glm::vec2* p, const glm::vec2* uv, int num_points, float z);
 	void process();
 	void tesselate();
+	int tesselateTile(TileCategory tile, float x, float y, std::vector<float>& vb);
 	void update(float x1, float x2, float y1, float y2);
 	void render(const Shaders::GameShaderContext* context);
 
