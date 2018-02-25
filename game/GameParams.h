@@ -12,5 +12,5 @@ namespace GameParams
 	static const float COIN_WIDTH = 1.0f;
 	static const float COIN_HEIGHT = 1.0f;
 
-	static const float VISIBLE_LEVEL_WIDTH = 32.0f;		// 32 game units horizontal shown, vertical based on device aspect ratio
+	static const float VISIBLE_LEVEL_WIDTH = 24.0f;		// 32 game units horizontal shown, vertical based on device aspect ratio
 };

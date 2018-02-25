@@ -1655,7 +1655,7 @@ void Engine::onRender()
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
-		glDisable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 		glViewport(0, 0, Screen::getWidth(), Screen::getHeight());
 		glScissor(0, 0, Screen::getWidth(), Screen::getHeight());
