@@ -18,7 +18,7 @@ class PolyAnim
 {
 public:
 	// Fixed quad, animated with texture for each frame
-	PolyAnim(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int num_frames, float z, TextureSet* texture);
+	PolyAnim(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int start_frame, int num_frames, float z, TextureSet* texture);
 
 	// Fixed quad, not animated, texture
 	PolyAnim(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, float z, Texture* texture);

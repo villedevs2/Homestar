@@ -209,21 +209,21 @@ int Engine::load()
 			float rad = GameParams::PLAYER_RADIUS;
 			float z = 1000.0f;
 			
-			PolyAnim* bh_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_bountyhunter_set->getNumTextures(), z, m_bountyhunter_set);
+			PolyAnim* bh_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_bountyhunter_set->getNumTextures(), z, m_bountyhunter_set);
 			m_sprites.push_back(bh_anim);
-			PolyAnim* bh_effect_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_bh_effect_set->getNumTextures(), z+100, m_bh_effect_set);
+			PolyAnim* bh_effect_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_bh_effect_set->getNumTextures(), z+100, m_bh_effect_set);
 			m_sprites.push_back(bh_effect_anim);
-			PolyAnim* tire_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_tire_set->getNumTextures(), z, m_tire_set);
+			PolyAnim* tire_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_tire_set->getNumTextures(), z, m_tire_set);
 			m_sprites.push_back(tire_anim);
-			PolyAnim* soccer_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_soccer_set->getNumTextures(), z, m_soccer_set);
+			PolyAnim* soccer_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_soccer_set->getNumTextures(), z, m_soccer_set);
 			m_sprites.push_back(soccer_anim);
-			PolyAnim* reactor_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_reactor_set->getNumTextures(), z, m_reactor_set);
+			PolyAnim* reactor_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_reactor_set->getNumTextures(), z, m_reactor_set);
 			m_sprites.push_back(reactor_anim);
-			PolyAnim* hamsterwheel_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_hamsterwheel_set->getNumTextures(), z, m_hamsterwheel_set);
+			PolyAnim* hamsterwheel_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_hamsterwheel_set->getNumTextures(), z, m_hamsterwheel_set);
 			m_sprites.push_back(hamsterwheel_anim);
-			PolyAnim* hamsterleft_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_hamsterleft_set->getNumTextures(), z, m_hamsterleft_set);
+			PolyAnim* hamsterleft_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_hamsterleft_set->getNumTextures(), z, m_hamsterleft_set);
 			m_sprites.push_back(hamsterleft_anim);
-			PolyAnim* hamsterright_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), m_hamsterright_set->getNumTextures(), z, m_hamsterright_set);
+			PolyAnim* hamsterright_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_hamsterright_set->getNumTextures(), z, m_hamsterright_set);
 			m_sprites.push_back(hamsterright_anim);
 
 

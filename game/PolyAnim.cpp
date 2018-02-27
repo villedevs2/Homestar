@@ -1,12 +1,12 @@
 #include "PolyAnim.h"
 
-PolyAnim::PolyAnim(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int num_frames, float z, TextureSet* textures)
+PolyAnim::PolyAnim(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4, int start_frame, int num_frames, float z, TextureSet* textures)
 {
 	std::vector<glm::vec4> verts;
 
 	for (int frame=0; frame < num_frames; frame++)
 	{
-		Texture* tex = textures->getTexture(frame);
+		Texture* tex = textures->getTexture(start_frame + frame);
 
 		verts.push_back(glm::vec4(p1.x, p1.y, tex->m_left, tex->m_top));
 		verts.push_back(glm::vec4(p2.x, p2.y, tex->m_left, tex->m_bottom));
@@ -132,6 +132,7 @@ void PolyAnim::init(const std::vector<glm::vec4>& verts, int num_points, int num
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glBufferData(GL_ARRAY_BUFFER, (vbi * sizeof(float)), vb, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	delete [] vb;
 }

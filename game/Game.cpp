@@ -271,7 +271,7 @@ void Game::onRender()
 
 		case GAMESTATE_INGAME_LOAD:
 		{
-			m_loader->render(&m_ui_shader);
+			m_loader->render(&m_ui_shader, &m_game_shader);
 			break;
 		}
 
