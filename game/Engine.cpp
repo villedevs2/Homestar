@@ -577,10 +577,10 @@ void Engine::shutdown()
 	SAFE_DELETE(m_goal_tex);
 	SAFE_DELETE(m_level_texture);
 
-	SAFE_DELETE(m_bountyhunter_set);
-	SAFE_DELETE(m_bh_effect_set);
-	SAFE_DELETE(m_tire_set);
-	SAFE_DELETE(m_soccer_set);
+//	SAFE_DELETE(m_bountyhunter_set);
+//	SAFE_DELETE(m_bh_effect_set);
+//	SAFE_DELETE(m_tire_set);
+//	SAFE_DELETE(m_soccer_set);
 
 	SAFE_DELETE(m_pause_bg);
 	SAFE_DELETE(m_pausefont);
@@ -661,10 +661,12 @@ void Engine::reset()
 }
 
 void Engine::setShaders(const Shaders::GameShaderContext* default_shader,
+						const Shaders::LevelShaderContext* level_shader,
 						const Shaders::UIShaderContext* ui_shader,
 						const Shaders::ParticleShaderContext* particle_shader)
 {
 	m_game_shader = default_shader;
+	m_level_shader = level_shader;
 	m_ui_shader = ui_shader;
 	m_particle_shader = particle_shader;
 }
@@ -1655,15 +1657,13 @@ void Engine::onRender()
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
-		glEnable(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 		glViewport(0, 0, Screen::getWidth(), Screen::getHeight());
 		glScissor(0, 0, Screen::getWidth(), Screen::getHeight());
 
 		glClearDepthf(1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-		glUseProgram(m_game_shader->shader);
 
 
 		// screen half width and height in game units
@@ -1674,6 +1674,60 @@ void Engine::onRender()
 		float scrolly = -m_scrollpos_y + halfh;
 
 
+		// render level 3D parts
+		glUseProgram(m_level_shader->shader);
+
+		m_level_texture->apply(0);
+
+		const double fov = 60.0;
+		const double near_plane = 0.01;
+		const double far_plane = 1000.0;
+
+		float size = near_plane * (float)tan((fov * M_PI / 180.0) / 2);
+
+		float camera_distance = (float)(GameParams::VISIBLE_LEVEL_WIDTH / 2) / tan((fov * M_PI / 180.0) / 2);
+
+		glm::vec2 cam_pos = glm::vec2(m_scrollpos_x, m_scrollpos_y);
+
+
+		glm::vec3 pos = glm::vec3(cam_pos.x, cam_pos.y, camera_distance);
+		glm::vec3 eye = glm::vec3(cam_pos.x, cam_pos.y, 0.0f);
+
+		glm::mat4 camera_proj_matrix = glm::frustum<float>(-size, size, size / Screen::getAspect(), -size / Screen::getAspect(), near_plane, far_plane);
+		glm::mat4 camera_view_matrix = glm::lookAt(pos, eye, glm::vec3(0.0f, 1.0f, 0.0));
+		glm::mat4 camera_vp_matrix = camera_proj_matrix * camera_view_matrix;
+
+
+		glUniform4f(m_level_shader->color, 1.0f, 1.0f, 1.0f, 1.0f);
+
+		glUniformMatrix4fv(m_level_shader->vp_matrix, 1, false, glm::value_ptr(camera_vp_matrix));
+		glUniformMatrix4fv(m_level_shader->v_matrix, 1, false, glm::value_ptr(camera_view_matrix));
+
+		
+
+//		glEnable(GL_DEPTH_TEST);
+//		glDepthMask(GL_TRUE);
+
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, m_base_tex);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, m_env_tex);
+
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, m_ambient_tex);
+
+		glUniform1i(m_level_shader->color_sampler, 0);
+		glUniform1i(m_level_shader->amb_sampler, 1);
+
+		glUniform3f(m_level_shader->light, 0.7, 0.7, -0.3);
+
+
+		m_geometry->render(m_level_shader);
+
+
+
+		// render 2D parts
+		glUseProgram(m_game_shader->shader);
+
 		// setup matrices
 		float level_vp_mat[4] = {1.0f / halfw, 0.0f,
 								 0.0f, 1.0f / halfh };
@@ -1682,15 +1736,6 @@ void Engine::onRender()
 		float level_rot_mat[4] = {1.0f, 0.0f,
 								  0.0f, 1.0f};
 		glUniformMatrix2fv(m_game_shader->rot_matrix, 1, false, level_rot_mat);
-
-		// render playfield
-		m_level_texture->apply(0);
-
-		glUniform2f(m_game_shader->location, scrollx, scrolly);
-		glUniform2f(m_game_shader->scale, 1.0f, 1.0f);
-		glUniform4f(m_game_shader->color, 1.0f, 1.0f, 1.0f, 1.0f);
-
-		m_geometry->render(m_game_shader);
 
 
 		// render background

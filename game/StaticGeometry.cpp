@@ -427,7 +427,7 @@ int StaticGeometry::tesselateTile(TileCategory tile, float x, float y, std::vect
 	float tile_width = 1.0f;
 	float tile_height = 1.0f;
 
-	float z = 100.0f;
+	float z = 1.0f;
 
 	glm::vec3 p[6];
 	glm::vec2 uv[6];
@@ -654,7 +654,7 @@ void StaticGeometry::update(float x1, float x2, float y1, float y2)
 	if (m_vis_bucket_yend >= (AREA_HEIGHT/BUCKET_HEIGHT)) m_vis_bucket_yend = (AREA_HEIGHT/BUCKET_HEIGHT) - 1;
 }
 
-void StaticGeometry::render(const Shaders::GameShaderContext* context)
+void StaticGeometry::render(const Shaders::LevelShaderContext* context)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		

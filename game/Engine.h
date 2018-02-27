@@ -63,6 +63,7 @@ public:
 	void onTouch(UI::UITouchEvent type, float x, float y);
 	void setInputAngle(float angle);
 	void setShaders(const Shaders::GameShaderContext* game_shader,
+					const Shaders::LevelShaderContext* level_shader,
 					const Shaders::UIShaderContext* ui_shader,
 					const Shaders::ParticleShaderContext* particle_shader);
 	int load();
@@ -295,6 +296,7 @@ private:
 	UIText* m_collect3_text;
 
 	const Shaders::GameShaderContext* m_game_shader;
+	const Shaders::LevelShaderContext* m_level_shader;
 	const Shaders::UIShaderContext* m_ui_shader;
 	const Shaders::ParticleShaderContext* m_particle_shader;
 

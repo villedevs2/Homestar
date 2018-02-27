@@ -56,6 +56,31 @@ void Game::init(int screen_width, int screen_height)
 		Debug::error("Engine::init(): game shader attribute mapping failed.");
 
 
+	// load 3D level shader
+	shader = Shaders::loadShaderProgram("level_vertshader.glsl",
+										"level_fragshader.glsl");
+
+	if (shader == 0)
+		Debug::error("Engine::init(): load level shader failed.");
+
+	m_level_shader.shader = shader;
+
+	m_level_shader.position					= glGetAttribLocation(shader, "a_position");
+	m_level_shader.tex_coord				= glGetAttribLocation(shader, "a_texcoord");
+	m_level_shader.amb_coord				= glGetAttribLocation(shader, "a_ambcoord");
+	m_level_shader.color					= glGetAttribLocation(shader, "a_color");
+	m_level_shader.normal					= glGetAttribLocation(shader, "a_normal");
+	m_level_shader.light					= glGetUniformLocation(shader, "u_light");
+	m_level_shader.cam_pos					= glGetUniformLocation(shader, "u_campos");
+	m_level_shader.vp_matrix				= glGetUniformLocation(shader, "m_vp_matrix");
+	m_level_shader.v_matrix					= glGetUniformLocation(shader, "m_v_matrix");
+	m_level_shader.color_sampler			= glGetUniformLocation(shader, "s_color_texture");
+	m_level_shader.amb_sampler				= glGetUniformLocation(shader, "s_amb_texture");
+
+	if (glGetError() != GL_NO_ERROR)
+		Debug::error("Engine::init(): level shader attribute mapping failed.");
+
+
 	// load 2D UI shader
 	shader = Shaders::loadShaderProgram("ui_vertshader.glsl",
 										"ui_fragshader.glsl");
@@ -183,7 +208,7 @@ void Game::onUpdate(int time)
 				const char* level_name[2] = {"level1.level", "level1.level"};
 
 				m_engine->init(level_name[level]);
-				m_engine->setShaders(&m_game_shader, &m_ui_shader, &m_particle_shader);
+				m_engine->setShaders(&m_game_shader, &m_level_shader, &m_ui_shader, &m_particle_shader);
 			}
 			break;
 		}

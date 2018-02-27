@@ -115,7 +115,7 @@ public:
 	void tesselate();
 	int tesselateTile(TileCategory tile, float x, float y, std::vector<float>& vb);
 	void update(float x1, float x2, float y1, float y2);
-	void render(const Shaders::GameShaderContext* context);
+	void render(const Shaders::LevelShaderContext* context);
 
 	int insertTile(const StaticGeometry::Tile& tile);
 	void insertBucket(const StaticGeometry::Bucket& bucket);

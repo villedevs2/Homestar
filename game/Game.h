@@ -59,6 +59,7 @@ private:
 	Loader* m_loader;
 
 	Shaders::GameShaderContext m_game_shader;
+	Shaders::LevelShaderContext m_level_shader;
 	Shaders::UIShaderContext m_ui_shader;
 	Shaders::ParticleShaderContext m_particle_shader;
 

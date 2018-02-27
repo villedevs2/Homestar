@@ -51,6 +51,23 @@ namespace Shaders
 		GLuint part_size;
 	} ParticleShaderContext;
 
+	typedef struct
+	{
+		GLuint shader;
+
+		GLuint position;
+		GLuint tex_coord;
+		GLuint amb_coord;
+		GLuint color;
+		GLuint normal;
+		GLuint vp_matrix;
+		GLuint v_matrix;
+		GLuint light;
+		GLuint cam_pos;		// for env mapping
+		GLuint color_sampler;
+		GLuint amb_sampler;
+	} LevelShaderContext;
+
 	std::string loadShader(std::string filename);
 	GLuint loadShaderProgram(std::string vs_filename, std::string fs_filename);
 };
