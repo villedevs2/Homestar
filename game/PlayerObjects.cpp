@@ -52,6 +52,25 @@ PlayerReactor::~PlayerReactor()
 
 
 
+PlayerShip::PlayerShip(PolyAnim* animation, Atlas* atlas) : DynamicObject(DynamicObject::COLLIDER_PLAYER, animation, atlas)
+{
+}
+
+PlayerShip::~PlayerShip()
+{
+}
+
+void PlayerShip::render(const Shaders::GameShaderContext* context)
+{
+	m_atlas->apply(0);
+
+	int frame = ((m_time / 1000000) / 20) % m_anim->getNumFrames();
+	m_anim->render(context, frame);
+}
+
+
+
+
 PlayerHamsterWheel::PlayerHamsterWheel(PolyAnim* animation, PolyAnim* left, PolyAnim* right, Atlas* atlas) : DynamicObject(DynamicObject::COLLIDER_PLAYER, animation, atlas)
 {
 	m_left = left;

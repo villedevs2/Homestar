@@ -3,6 +3,17 @@
 
 #include <cmath>
 
+
+class PlayerShip : public DynamicObject
+{
+public:
+	PlayerShip(PolyAnim* animation, Atlas* atlas);
+	~PlayerShip();
+
+	virtual void render(const Shaders::GameShaderContext* context);
+};
+
+
 class PlayerTire : public DynamicObject
 {
 public:

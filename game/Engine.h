@@ -346,6 +346,7 @@ private:
 	TextureSet* m_hamsterwheel_set;
 	TextureSet* m_hamsterleft_set;
 	TextureSet* m_hamsterright_set;
+	TextureSet* m_player_set;
 
 	b2Body* m_player_body;
 

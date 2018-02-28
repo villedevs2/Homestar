@@ -205,6 +205,9 @@ int Engine::load()
 			m_hamsterright_set = new TextureSet();
 			m_hamsterright_set->load("playerhamsterright.atlas.xml");
 
+			m_player_set = new TextureSet();
+			m_player_set->load("playership.atlas.xml");
+
 
 			float rad = GameParams::PLAYER_RADIUS;
 			float z = 1000.0f;
@@ -226,6 +229,9 @@ int Engine::load()
 			PolyAnim* hamsterright_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_hamsterright_set->getNumTextures(), z, m_hamsterright_set);
 			m_sprites.push_back(hamsterright_anim);
 
+			PolyAnim* player_anim = new PolyAnim(glm::vec2(-rad, -rad), glm::vec2(-rad, rad), glm::vec2(rad, rad), glm::vec2(rad, -rad), 0, m_player_set->getNumTextures(), z, m_player_set);
+			m_sprites.push_back(player_anim);
+
 
 
 			PlayerTire* player_tire = new PlayerTire(tire_anim, m_tire_set->getAtlas());
@@ -243,8 +249,11 @@ int Engine::load()
 			PlayerHamsterWheel* player_hamsterwheel = new PlayerHamsterWheel(hamsterwheel_anim, hamsterleft_anim, hamsterright_anim, m_hamsterleft_set->getAtlas());
 			m_dynobjs.push_back(dynamic_cast<DynamicObject*>(player_hamsterwheel));
 
+			PlayerShip* player_ship = new PlayerShip(player_anim, m_player_set->getAtlas());
+			m_dynobjs.push_back(dynamic_cast<DynamicObject*>(player_ship));
 
-			insertPlayerObject(player_hamsterwheel);
+
+			insertPlayerObject(player_ship);
 
 
 			//tesselateStaticGeo();
@@ -1687,14 +1696,15 @@ void Engine::onRender()
 
 		float camera_distance = (float)(GameParams::VISIBLE_LEVEL_WIDTH / 2) / tan((fov * M_PI / 180.0) / 2);
 
-		glm::vec2 cam_pos = glm::vec2(m_scrollpos_x, m_scrollpos_y);
+//		glm::vec2 cam_pos = glm::vec2(m_scrollpos_x, m_scrollpos_y);
+		glm::vec2 cam_pos(10.0f, 0.0f);
 
 
 		glm::vec3 pos = glm::vec3(cam_pos.x, cam_pos.y, camera_distance);
 		glm::vec3 eye = glm::vec3(cam_pos.x, cam_pos.y, 0.0f);
 
 		glm::mat4 camera_proj_matrix = glm::frustum<float>(-size, size, size / Screen::getAspect(), -size / Screen::getAspect(), near_plane, far_plane);
-		glm::mat4 camera_view_matrix = glm::lookAt(pos, eye, glm::vec3(0.0f, 1.0f, 0.0));
+		glm::mat4 camera_view_matrix = glm::lookAt(pos, eye, glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 camera_vp_matrix = camera_proj_matrix * camera_view_matrix;
 
 
@@ -1703,8 +1713,11 @@ void Engine::onRender()
 		glUniformMatrix4fv(m_level_shader->vp_matrix, 1, false, glm::value_ptr(camera_vp_matrix));
 		glUniformMatrix4fv(m_level_shader->v_matrix, 1, false, glm::value_ptr(camera_view_matrix));
 
+		m_geometry->render(m_level_shader);
+
 		
 
+		
 //		glEnable(GL_DEPTH_TEST);
 //		glDepthMask(GL_TRUE);
 

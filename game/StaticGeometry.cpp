@@ -427,7 +427,7 @@ int StaticGeometry::tesselateTile(TileCategory tile, float x, float y, std::vect
 	float tile_width = 1.0f;
 	float tile_height = 1.0f;
 
-	float z = 1.0f;
+	float z = 10.0f;
 
 	glm::vec3 p[6];
 	glm::vec2 uv[6];
@@ -536,6 +536,7 @@ void StaticGeometry::tesselate()
 
 	int tri_index = 0;
 
+#if 0
 	for (int j = 0; j < (AREA_HEIGHT / BUCKET_HEIGHT); j++)
 	{
 		for (int i = 0; i < (AREA_WIDTH / BUCKET_WIDTH); i++)
@@ -615,6 +616,26 @@ void StaticGeometry::tesselate()
 			}
 		}
 	}
+#endif
+
+	float xx = 0;
+	float yy = 0;
+
+	tempvb.push_back(xx);
+	tempvb.push_back(yy);
+	tempvb.push_back(0.0f);
+	tempvb.push_back(0.0f);
+	tempvb.push_back(0.0f);
+	tempvb.push_back(xx+0.0f);
+	tempvb.push_back(yy+10.0f);
+	tempvb.push_back(0.0f);
+	tempvb.push_back(0.0f);
+	tempvb.push_back(0.125f);
+	tempvb.push_back(xx+10.0f);
+	tempvb.push_back(yy+10.0f);
+	tempvb.push_back(0.0f);
+	tempvb.push_back(0.125f);
+	tempvb.push_back(0.125f);
 
 
 	// calculate total num of tris
@@ -663,6 +684,7 @@ void StaticGeometry::render(const Shaders::LevelShaderContext* context)
 	glVertexAttribPointer(context->tex_coord, 2, GL_FLOAT, false, 20, (void*)12);
 	glEnableVertexAttribArray(context->tex_coord);
 
+#if 0
 	// buckets
 	for (int j = m_vis_bucket_ystart; j <= m_vis_bucket_yend; j++)
 	{
@@ -676,6 +698,9 @@ void StaticGeometry::render(const Shaders::LevelShaderContext* context)
 			}
 		}
 	}
+#endif
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glDisableVertexAttribArray(context->position);
 	glDisableVertexAttribArray(context->tex_coord);	
