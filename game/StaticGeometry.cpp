@@ -618,25 +618,59 @@ void StaticGeometry::tesselate()
 	}
 #endif
 
-	float xx = 0;
-	float yy = 0;
+	float xw = 8;
+	float yw = 8;
+	float xxx = -1.5 * xw;
+	float yyy = -1.5 * yw;
 
-	tempvb.push_back(xx);
-	tempvb.push_back(yy);
-	tempvb.push_back(0.0f);
-	tempvb.push_back(0.0f);
-	tempvb.push_back(0.0f);
-	tempvb.push_back(xx+0.0f);
-	tempvb.push_back(yy+10.0f);
-	tempvb.push_back(0.0f);
-	tempvb.push_back(0.0f);
-	tempvb.push_back(0.125f);
-	tempvb.push_back(xx+10.0f);
-	tempvb.push_back(yy+10.0f);
-	tempvb.push_back(0.0f);
-	tempvb.push_back(0.125f);
-	tempvb.push_back(0.125f);
+	float vz[3][3] = 
+	{
+		{ 0.0f, 20.0f, 0.0f },
+		{ 20.0f, 20.0f, 20.0f },
+		{ 0.0f, 20.0f, 0.0f }
+	};
 
+	for (int jj = 0; jj < 3; jj++)
+	{
+		for (int ii = 0; ii < 3; ii++)
+		{
+			float xx = xxx + (ii * xw);
+			float yy = yyy + (jj * yw);
+			float zz = vz[jj][ii];
+
+			tempvb.push_back(xx);
+			tempvb.push_back(yy);
+			tempvb.push_back(zz);
+			tempvb.push_back(0.0f);
+			tempvb.push_back(0.0f);
+			tempvb.push_back(xx + 0.0f);
+			tempvb.push_back(yy + yw);
+			tempvb.push_back(zz);
+			tempvb.push_back(0.0f);
+			tempvb.push_back(0.125f);
+			tempvb.push_back(xx + xw);
+			tempvb.push_back(yy + yw);
+			tempvb.push_back(zz);
+			tempvb.push_back(0.125f);
+			tempvb.push_back(0.125f);
+
+			tempvb.push_back(xx);
+			tempvb.push_back(yy);
+			tempvb.push_back(zz);
+			tempvb.push_back(0.0f);
+			tempvb.push_back(0.0f);
+			tempvb.push_back(xx + xw);
+			tempvb.push_back(yy + yw);
+			tempvb.push_back(zz);
+			tempvb.push_back(0.125f);
+			tempvb.push_back(0.125f);
+			tempvb.push_back(xx + xw);
+			tempvb.push_back(yy + 0.0f);
+			tempvb.push_back(zz);
+			tempvb.push_back(0.125f);
+			tempvb.push_back(0.0f);
+		}
+	}
 
 	// calculate total num of tris
 	int vb_size = tempvb.size();
@@ -700,7 +734,7 @@ void StaticGeometry::render(const Shaders::LevelShaderContext* context)
 	}
 #endif
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 6*9);
 
 	glDisableVertexAttribArray(context->position);
 	glDisableVertexAttribArray(context->tex_coord);	

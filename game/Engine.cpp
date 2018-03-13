@@ -1688,7 +1688,7 @@ void Engine::onRender()
 
 		m_level_texture->apply(0);
 
-		const double fov = 60.0;
+		const double fov = 30.0;
 		const double near_plane = 0.01;
 		const double far_plane = 1000.0;
 
@@ -1697,24 +1697,21 @@ void Engine::onRender()
 		float camera_distance = (float)(GameParams::VISIBLE_LEVEL_WIDTH / 2) / tan((fov * M_PI / 180.0) / 2);
 
 //		glm::vec2 cam_pos = glm::vec2(m_scrollpos_x, m_scrollpos_y);
-		glm::vec2 cam_pos(10.0f, 0.0f);
+		glm::vec2 cam_pos(5.0f, 0.0f);
 
 
 		glm::vec3 pos = glm::vec3(cam_pos.x, cam_pos.y, camera_distance);
 		glm::vec3 eye = glm::vec3(cam_pos.x, cam_pos.y, 0.0f);
 
 		glm::mat4 camera_proj_matrix = glm::frustum<float>(-size, size, size / Screen::getAspect(), -size / Screen::getAspect(), near_plane, far_plane);
-		glm::mat4 camera_view_matrix = glm::lookAt(pos, eye, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 camera_view_matrix = glm::lookAt(pos, eye, glm::vec3(0.0f, 1.0, 0.0f));
 		glm::mat4 camera_vp_matrix = camera_proj_matrix * camera_view_matrix;
 
 
 		glUniform4f(m_level_shader->color, 1.0f, 1.0f, 1.0f, 1.0f);
 
-		glUniformMatrix4fv(m_level_shader->vp_matrix, 1, false, glm::value_ptr(camera_vp_matrix));
-		glUniformMatrix4fv(m_level_shader->v_matrix, 1, false, glm::value_ptr(camera_view_matrix));
-
-		m_geometry->render(m_level_shader);
-
+		glUniformMatrix4fv(m_level_shader->vp_matrix, 1, GL_FALSE, glm::value_ptr(camera_vp_matrix));
+		glUniformMatrix4fv(m_level_shader->v_matrix, 1, GL_FALSE, glm::value_ptr(camera_view_matrix));
 		
 
 		
